@@ -1,54 +1,69 @@
 import sys
-import email as e
+import email  
 from email.parser import Parser 
 import unittest
 
 
-def parse(email):
-    pip = Parser()
-    message = Parser.parsestring(pip , email)
+def parse(email_text):
+    message = email.message_from_string(email_text)
     return(message)
 
 def strip_body(message):
-    body = message.do_some_magic()
-    return body
+    body = message.get_payload()
+    for load in body:
+        if load.get_content_type() == 'text/plain':
+            return load.get_payload()
 
 def body2grocery_items(body):
-    return ['celery', 'guanine']
+    print body
+    print type(body)
+    body = body.splitlines()
+    return body
 
 def items_to_file(items, fileobj):
     for item in items:
         fileobj.writeline(item)
 
+def add_items2list(items, old_list):
+    with open(old_list) as f:
+        cur_list = f.read()
+    for item in items:
+        cur_list = cur_list + item + "\n"
+    return cur_list
+
+def write_list(new_list, list_filename):
+    with open(list_filename, 'w') as f:
+        f.write(new_list)
+
 class AutomtedTest(unittest.TestCase):
     def test_body_extraction(self):
         result = body2grocery_items('''celery
-cytosine''')
-        self.assertEqual(['celery', 'cytosine'],
+guanine''')
+        self.assertEqual(['celery', 'guanine'],
                         result)
 
     def test_complete_thing(self):
-        sample_file = open('my-sample-message').read()
+        old_list = "test-grocery.txt"
+        final_list = "test-final-list.txt"
+        sample_file = open('test.txt').read()
         parsed = parse(sample_file)
         body = strip_body(parsed)
         items = body2grocery_items(body)
-        self.assertEqual(['celery', 'cytosine'], items)
+        new_list = add_items2list(items, old_list)
+        write_list(new_list, old_list)
+        self.assertEqual(old_list, final_list)
     
 
-#    y = message.keys()
-#    # x = message.getitem('body')
-#    x = ""
-#    for key in y:
-#        x +=str(key)+"\n"
-#    with open("/home/swartzcr/scripts/test.txt", 'w') as f:
-#        f.write(x)
-
-
 def main():
-    email = sys.stdin.read()
-    message = parse(email) 
+    old_list = "grocery.txt"
+    email_text = sys.stdin.read()
+    message = parse(email_text)
+    body = strip_body(message)
+    items = body2grocery_items(body)
+    new_list = add_items2list(items, old_list)
+    write_list(new_list, old_list) 
     
 
 if __name__ == "__main__":
-    unittest.main()
-            
+    #unittest.main()
+    main()        
