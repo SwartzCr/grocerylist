@@ -1,4 +1,5 @@
 import sys
+import os.path
 import email  
 from email.parser import Parser 
 import unittest
@@ -55,7 +56,8 @@ guanine''')
     
 
 def main():
-    old_list = "grocery.txt"
+    di = os.path.dirname(os.path.abspath(__file__))
+    old_list = os.path.join(di,"grocery.txt")
     email_text = sys.stdin.read()
     message = parse(email_text)
     body = strip_body(message)
