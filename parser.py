@@ -20,16 +20,40 @@ def body2grocery_items(body):
     body = body.splitlines()
     return body
 
-def items_to_file(items, fileobj):
-    for item in items:
-        fileobj.writeline(item)
+def parse_pagefile(path):
+    with open(path) as f:
+        page = f.read()
+    page = page.split("<body>")
+    new_page = []
+    new_page.append(page[0])
+    new_page.append("<body>")
+    body_trail = page[1].split("</body>")
+    new_page.append(body_trail[0])
+    new_page.append("</body>")
+    new_page.append(body_trail[1])
+    return(new_page)
 
-def add_items2list(items, old_list):
-    with open(old_list) as f:
-        cur_list = f.read()
+def add_items2list(items, body):
+    num = len(x)
     for item in items:
-        cur_list = cur_list + item + "\n"
-    return cur_list
+        body.append(num+" "+item)
+        num += 1
+    return body
+
+def list2string(sep_list):
+    final_list = ""
+    for item in sep_list:
+        line = ""
+        for part in item:
+            line += part
+        final_list += line+"\n"
+    return final_list
+
+def stitch(pagelist):
+    page = ""
+    for item in pagelist:
+        page += item
+    return page
 
 def write_list(new_list, list_filename):
     with open(list_filename, 'w') as f:
@@ -56,12 +80,17 @@ guanine''')
 
 def main():
     old_list = "grocery.txt"
+    pagefile_path = "/home/swartzcr/public_html/grocery/index.html"
+    pagefile = parse_pagefile(pagefile_path)
+    pagefile_body = pagefile[2]
     email_text = sys.stdin.read()
     message = parse(email_text)
     body = strip_body(message)
     items = body2grocery_items(body)
-    new_list = add_items2list(items, old_list)
-    write_list(new_list, old_list) 
+    new_body = add_items2list(items, pagefile_body)
+    pagefile[2] = new_body
+    new_list = stitch(pagefile)
+    write_list(new_list, pagefile_path) 
     
 
 if __name__ == "__main__":
