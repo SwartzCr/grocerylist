@@ -1,4 +1,5 @@
 import sys
+import os.path
 import email  
 from email.parser import Parser 
 import unittest
