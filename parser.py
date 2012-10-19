@@ -80,15 +80,6 @@ guanine''')
     
 
 def main():
-<<<<<<< HEAD
-    di = os.path.dirname(os.path.abspath(__file__))
-    old_list = os.path.join(di,"grocery.txt")
-=======
-    old_list = "grocery.txt"
-    pagefile_path = "/home/swartzcr/public_html/grocery/index.html"
-    pagefile = parse_pagefile(pagefile_path)
-    pagefile_body = pagefile[2]
->>>>>>> laptop
     email_text = sys.stdin.read()
     message = parse(email_text)
     body = strip_body(message)
