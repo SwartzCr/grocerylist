@@ -80,7 +80,9 @@ guanine''')
 
 def main():
     old_list = "grocery.txt"
-    pagefile_path = "/home/swartzcr/public_html/grocery/index.html"
+    this_path = os.path.abspath("__this__")
+    this_dir = os.path.dirname(this_path)
+    pagefile_path = this_dir + "/index.html"
     pagefile = parse_pagefile(pagefile_path)
     pagefile_body = pagefile[2]
     email_text = sys.stdin.read()
