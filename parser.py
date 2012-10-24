@@ -83,7 +83,7 @@ def main():
     grocery_data = execute(email_line_list, grocery_data)
     with open(dir_name+"/grocery.json", 'w') as f:
         json.dump(grocery_data, f)
-    page = write_page(grocery_list)
+    page = write_page(grocery_data)
     with open(dir_name+"/index.html",'w') as fi:
         fi.write(page)
 
