@@ -4,13 +4,15 @@ import email
 from email.parser import Parser 
 import unittest
 import json
-
-def parse(email_text):
-    message = email.message_from_string(email_text)
-    return(message)
+import smtplib
+from email.mime.text import MIMEText
 
 def parse_email(email_data):
-    payloads = email.message_from_string(email_data).get_payload()
+    parsed_email = email,message_from_string(email_data)
+    return parsed_email
+
+def parsed_email2split_lines(parsed_email):
+    payloads = parsed_email.get_payload()
     for payload in payloads:
         if payload.get_content_type() == 'text/plain':
             return payload.get_payload().splitlines()
@@ -50,6 +52,33 @@ def write_page(grocery_list):
     page +="</body></html>"
     return page
 
+def find_email_sender(parsed_email):
+    for thing in parsed_email.items():
+        if 'Return-Path' in thing:
+            return thing[1]
+        else:
+            return "swartzcr@gmail.com"
+
+def textify_grocery_data(grocery_data):
+    text = "The current contents of the grocery list are:\n"
+    for row in grocery_data:
+        text += str(row[0])+" "+str(row[1])i+"\n"
+    text += "remember to remove items reply with their numbers, space seperated on a line beginning with 'r '\n"
+    text += "for example 'r 1 2 3' would remove items 1, 2, and 3\n"
+    text += "to add items simply put them on seperate lines of your email"
+
+def send_email(grocery_data, parsed_email):
+    email_sender = find_email_sender(parsed_email)
+    grocery_data_text = textify_grocery_data(grocery_data)
+    me = "swartzcr@gmail.com"
+    msg = MIMEText(grocery_data_text)
+    msg['Subject']= 'You added items to the grocery list!'
+    msg['From'] = me
+    msg['To'] = str(email_sender)
+    s = smtplib.SMTP('localhost')
+    s.sendmail(me, email_sender, msg.as_string())
+    s.quit
+
 class AutomtedTest(unittest.TestCase):
     dir_name = os.path.dirname(os.path.abspath(__file__))
 
@@ -80,13 +109,15 @@ def main():
     with open(dir_name+"/grocery.json") as js:
         grocery_data = json.load(js)
     email_data = sys.stdin.read()
-    email_line_list = parse_email(email_data)
+    parsed_email = parse_email(email_data)
+    email_line_list = parsed_email2split_lines(parsed_email)
     grocery_data = execute(email_line_list, grocery_data)
     with open(dir_name+"/grocery.json", 'w') as f:
         json.dump(grocery_data, f)
     page = write_page(grocery_data)
     with open(dir_name+"/index.html",'w') as fi:
         fi.write(page)
+    send_email(grocery_data, parsed_email)
 
 if __name__ == "__main__":
     #unittest.main()
