@@ -46,7 +46,7 @@ def execute(email_line_list, grocery_data):
 def write_page(grocery_list):
     page = "<html><body>\n"
     for item in grocery_list:
-        page += "<p>"+item[0]+" "+item[1]+"</p>\n"
+        page += "<p>"+str(item[0])+" "+str(item[1])+"</p>\n"
     page +="</body></html>"
 
 class AutomtedTest(unittest.TestCase):
