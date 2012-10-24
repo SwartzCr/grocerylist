@@ -62,7 +62,7 @@ def find_email_sender(parsed_email):
 def textify_grocery_data(grocery_data):
     text = "The current contents of the grocery list are:\n"
     for row in grocery_data:
-        text += str(row[0])+" "+str(row[1])i+"\n"
+        text += str(row[0])+" "+str(row[1])+"\n"
     text += "remember to remove items reply with their numbers, space seperated on a line beginning with 'r '\n"
     text += "for example 'r 1 2 3' would remove items 1, 2, and 3\n"
     text += "to add items simply put them on seperate lines of your email"
@@ -76,8 +76,8 @@ def send_email(grocery_data, parsed_email):
     msg['From'] = me
     msg['To'] = str(email_sender)
     s = smtplib.SMTP('localhost')
-    s.sendmail(me, email_sender, msg.as_string())
-    s.quit
+    s.sendmail(me, [email_sender], msg.as_string())
+    s.quit()
 
 class AutomtedTest(unittest.TestCase):
     dir_name = os.path.dirname(os.path.abspath(__file__))
