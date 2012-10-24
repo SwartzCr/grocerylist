@@ -66,6 +66,7 @@ def textify_grocery_data(grocery_data):
     text += "remember to remove items reply with their numbers, space seperated on a line beginning with 'r '\n"
     text += "for example 'r 1 2 3' would remove items 1, 2, and 3\n"
     text += "to add items simply put them on seperate lines of your email"
+    text += "to check the contents of the list ANY TIME go to rose.makesad.us/~swartzcr/grocery/"
     return text
 
 def send_email(grocery_data, parsed_email):
