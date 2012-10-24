@@ -53,7 +53,7 @@ class AutomtedTest(unittest.TestCase):
     dir_name = os.path.dirname(os.path.abspath(__file__))
 
     def test_parse_email_to_list(self):
-        with open(dir_name+"test.txt") as f:
+        with open(dir_name+"/test.txt") as f:
             test_email = f.read()
         result =  parse_email(test_email)
         self.assertEqual(result, ["hsa","ashd", "ashd"])
@@ -76,15 +76,15 @@ class AutomtedTest(unittest.TestCase):
 
 def main():
     dir_name = os.path.dirname(os.path.abspath(__file__))
-    with open(dir_name+"grocery.json") as js:
+    with open(dir_name+"/grocery.json") as js:
         grocery_data = json.load(js)
     email_data = sys.stdin.read()
     email_line_list = parse_email(email_data)
     grocery_data = execute(email_line_list, grocery_data)
-    with open(dir_name+"grocery.json", 'w') as f:
+    with open(dir_name+"/grocery.json", 'w') as f:
         json.dump(grocery_data, f)
     page = write_page(grocery_list)
-    with open(dir_name+"index.html",'w') as fi:
+    with open(dir_name+"/index.html",'w') as fi:
         fi.write(page)
 
 if __name__ == "__main__":
