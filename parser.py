@@ -50,7 +50,7 @@ def write_page(grocery_list):
     page +="</body></html>"
 
 class AutomtedTest(unittest.TestCase):
-    dir_name = os.dirname(os.path.abspath(__file__))
+    dir_name = os.path.dirname(os.path.abspath(__file__))
 
     def test_parse_email_to_list(self):
         with open(dir_name+"test.txt") as f:
@@ -75,7 +75,7 @@ class AutomtedTest(unittest.TestCase):
         self.assertEquals()
 
 def main():
-    dir_name = os.dirname(os.path.abspath(__file__))
+    dir_name = os.path.dirname(os.path.abspath(__file__))
     with open(dir_name+"grocery.json") as js:
         grocery_data = json.load(js)
     email_data = sys.stdin.read()
