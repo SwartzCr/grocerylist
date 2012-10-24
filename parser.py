@@ -70,6 +70,9 @@ class AutomtedTest(unittest.TestCase):
         result = execute([("r 2 3 ")], [(0, 'a'), (1, 'b'), (2, 'c'), (3, 'd'), (4,'e'), (5, 'f')])
         self.assertEquals(result, [(0,'a'), (1,'b'), (2, 'e'), (3, 'f')])
 
+    def test_write_website(self):
+        result = write_page([(0, 'a'), (1,'b')])
+        self.assertEquals()
 def main():
     with open("grocery.json") as js:
         grocery_data = json.load(js)
