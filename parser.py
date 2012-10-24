@@ -73,6 +73,7 @@ class AutomtedTest(unittest.TestCase):
     def test_write_website(self):
         result = write_page([(0, 'a'), (1,'b')])
         self.assertEquals()
+
 def main():
     with open("grocery.json") as js:
         grocery_data = json.load(js)
@@ -86,5 +87,5 @@ def main():
         fi.write(page)
 
 if __name__ == "__main__":
-    unittest.main()
-    #main()        
+    #unittest.main()
+    main()        
