@@ -3,99 +3,85 @@ import os.path
 import email  
 from email.parser import Parser 
 import unittest
-
+import json
 
 def parse(email_text):
     message = email.message_from_string(email_text)
     return(message)
 
-def strip_body(message):
-    body = message.get_payload()
-    for load in body:
-        if load.get_content_type() == 'text/plain':
-            return load.get_payload()
+def parse_email(email_data):
+    payloads = email.message_from_string(email_data).get_payload()
+    for payload in payloads:
+        if payload.get_content_type() == 'text/plain':
+            return payload.get_payload().splitlines()
 
-def body2grocery_items(body):
-    print body
-    print type(body)
-    body = body.splitlines()
-    return body
+def renumber(grocery_list):
+    return list(enumerate( [grocery_item for (old_index, grocery_item) in grocery_list]))
 
-def parse_pagefile(path):
-    with open(path) as f:
-        page = f.read()
-    page = page.split("<body>")
-    new_page = []
-    new_page.append(page[0])
-    new_page.append("<body>")
-    body_trail = page[1].split("</body>")
-    new_page.append(body_trail[0])
-    new_page.append("</body>")
-    new_page.append(body_trail[1])
-    return(new_page)
+def remove_items(space_sep_string, grocery_list):
+    com, args = space_sep_string.split(" ",1)
+    nums = [int(x) for x in args.split(" ")]
+    return remove_items_pure(nums, grocery_list)
 
-def add_items2list(items, body):
-    num = len(x)
-    for item in items:
-        body.append(num+" "+item)
-        num += 1
-    return body
+def remove_items_pure(nums, grocery_list):
+    copied_grocery_list = []
+    for item in grocery_list:
+        if item[0] in nums:
+            continue
+        else:    
+            copied_grocery_list.append(item)
+    return copied_grocery_list
 
-def list2string(sep_list):
-    final_list = ""
-    for item in sep_list:
-        line = ""
-        for part in item:
-            line += part
-        final_list += line+"\n"
-    return final_list
+def execute(email_line_list, grocery_data):
+    INDESTRUCTABLE_OBJECT = -1
+    for line in email_line_list:
+        line = line.strip()
+        if line.startswith("r "):
+            grocery_data = remove_items(line, grocery_data)
+        else:
+            grocery_data.append([INDESTRUCTABLE_OBJECT, line])
+    grocery_data = renumber(grocery_data)
+    return grocery_data
 
-def stitch(pagelist):
-    page = ""
-    for item in pagelist:
-        page += item
-    return page
-
-def write_list(new_list, list_filename):
-    with open(list_filename, 'w') as f:
-        f.write(new_list)
+def write_page(grocery_list):
+    page = "<html><body>\n"
+    for item in grocery_list:
+        page += "<p>"+item[0]+" "+item[1]+"</p>\n"
+    page +="</body></html>"
 
 class AutomtedTest(unittest.TestCase):
-    def test_body_extraction(self):
-        result = body2grocery_items('''celery
-guanine''')
-        self.assertEqual(['celery', 'guanine'],
-                        result)
 
-    def test_complete_thing(self):
-        old_list = "test-grocery.txt"
-        final_list = "test-final-list.txt"
-        sample_file = open('test.txt').read()
-        parsed = parse(sample_file)
-        body = strip_body(parsed)
-        items = body2grocery_items(body)
-        new_list = add_items2list(items, old_list)
-        write_list(new_list, old_list)
-        self.assertEqual(old_list, final_list)
-    
+
+    def test_parse_email_to_list(self):
+        with open("test.txt") as f:
+            test_email = f.read()
+        result =  parse_email(test_email)
+        self.assertEqual(result, ["hsa","ashd", "ashd"])
+
+    def test_renumber(self):
+        result = renumber([[2, 'a'],[1,'b'],[17, 'c']])
+        self.assertEqual(result, [(0, 'a'),(1,'b'),(2,'c')])
+
+    def test_remove_items(self):
+        result = remove_items("r 2 3", [(0, 'a'), (1, 'b'), (2, 'c'), (3, 'd'), (4,'e'), (5, 'f')])
+        self.assertEquals(result, [(0,'a'), (1,'b'), (4, 'e'), (5, 'f')])
+
+    def test_remove_trailing_whitespace(self):
+        result = execute([("r 2 3 ")], [(0, 'a'), (1, 'b'), (2, 'c'), (3, 'd'), (4,'e'), (5, 'f')])
+        self.assertEquals(result, [(0,'a'), (1,'b'), (2, 'e'), (3, 'f')])
 
 def main():
-    old_list = "grocery.txt"
-    this_path = os.path.abspath("__this__")
-    this_dir = os.path.dirname(this_path)
-    pagefile_path = this_dir + "/index.html"
-    pagefile = parse_pagefile(pagefile_path)
-    pagefile_body = pagefile[2]
-    email_text = sys.stdin.read()
-    message = parse(email_text)
-    body = strip_body(message)
-    items = body2grocery_items(body)
-    new_body = add_items2list(items, pagefile_body)
-    pagefile[2] = new_body
-    new_list = stitch(pagefile)
-    write_list(new_list, pagefile_path) 
-    
+    with open("grocery.json") as js:
+        grocery_data = json.load(js)
+    email_data = sys.stdin.read()
+    email_line_list = parse_email(email_data)
+    grocery_data = execute(email_line_list, grocery_data)
+    with open("grocery.json", 'w') as f:
+        json.dump(grocery_data, f)
+    page = write_page(grocery_list)
+    with open("index.html",'w') as fi:
+        fi.write(page)
 
 if __name__ == "__main__":
-    #unittest.main()
-    main()        
+    unittest.main()
+    #main()        
