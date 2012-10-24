@@ -8,7 +8,7 @@ import smtplib
 from email.mime.text import MIMEText
 
 def parse_email(email_data):
-    parsed_email = email,message_from_string(email_data)
+    parsed_email = email.message_from_string(email_data)
     return parsed_email
 
 def parsed_email2split_lines(parsed_email):
