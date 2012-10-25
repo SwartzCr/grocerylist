@@ -68,11 +68,11 @@ def find_email_sender(parsed_email):
 def textify_grocery_data(grocery_data):
     text = "The current contents of the grocery list are:\n"
     for row in grocery_data:
-        text += str(row[0])+" "+str(row[1])+"\n"
+        text += str(row[0])+": "+str(row[1])+"\n"
     text += "\n"
     text += "remember to remove items reply with their numbers, space seperated on a line beginning with 'r '\n"
     text += "for example 'r 1 2 3' would remove items 1, 2, and 3\n"
-    text += "to add items start each line with an a or add put them on seperate lines of your email"
+    text += "to add items start each line with an a or add put them on seperate lines of your email\n"
     text += "to check the contents of the list ANY TIME go to rose.makesad.us/~swartzcr/grocery/"
     return text
 
