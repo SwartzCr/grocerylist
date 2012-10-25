@@ -38,10 +38,13 @@ def execute(email_line_list, grocery_data):
     INDESTRUCTABLE_OBJECT = -1
     for line in email_line_list:
         line = line.strip()
-        if line.startswith("r "):
+        if line.startswith(("r ","R ")):
             grocery_data = remove_items(line, grocery_data)
+        elif line.startswith(("a ","A ","add ","Add ")):
+            line_item = line.split(" ",1)[1]
+            grocery_data.append([INDESTRUCTABLE_OBJECT, line_item])
         else:
-            grocery_data.append([INDESTRUCTABLE_OBJECT, line])
+            continue
     grocery_data = renumber(grocery_data)
     return grocery_data
 
@@ -65,7 +68,7 @@ def textify_grocery_data(grocery_data):
         text += str(row[0])+" "+str(row[1])+"\n"
     text += "remember to remove items reply with their numbers, space seperated on a line beginning with 'r '\n"
     text += "for example 'r 1 2 3' would remove items 1, 2, and 3\n"
-    text += "to add items simply put them on seperate lines of your email"
+    text += "to add items start each line with an a or add put them on seperate lines of your email"
     text += "to check the contents of the list ANY TIME go to rose.makesad.us/~swartzcr/grocery/"
     return text
 
