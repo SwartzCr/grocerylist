@@ -15,10 +15,11 @@ def parsed_email2split_lines(parsed_email):
     payloads = parsed_email.get_payload()
     for payload in payloads:
         if payload.get_content_type() == 'text/plain':
-            if type(payload.get_payload()) != str:
-                return payload.get_payload().splitlines()
-            else:
+            if type(payload.get_payload()) is str:
                 return payload.splitlines()
+            else:
+                return payload.get_payload().splitlines()
+               
 
 def renumber(grocery_list):
     return list(enumerate( [grocery_item for (old_index, grocery_item) in grocery_list]))
