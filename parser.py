@@ -15,7 +15,7 @@ def parsed_email2split_lines(parsed_email):
     payloads = parsed_email.get_payload()
     for payload in payloads:
         if payload.get_content_type() == 'text/plain':
-            if type(payload.get_payload()) is str:
+            if type(payload) is str:
                 return payload.splitlines()
             else:
                 return payload.get_payload().splitlines()
