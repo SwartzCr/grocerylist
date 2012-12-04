@@ -117,13 +117,15 @@ class AutomtedTest(unittest.TestCase):
         result = write_page([(0, 'a'), (1,'b')])
         self.assertEquals()
 
-def main():
+def main(email_data):
     dir_name = os.path.dirname(os.path.abspath(__file__))
     with open(dir_name+"/grocery.json") as js:
         grocery_data = json.load(js)
-    email_data = sys.stdin.read()
     parsed_email = parse_email(email_data)
     email_line_list = parsed_email2split_lines(parsed_email)
+    if email_line_list:
+        with open(dir_name+"/"+datetime.datetime.now().ctime(), 'w') as er:
+            er.write(email_data)
     grocery_data = execute(email_line_list, grocery_data)
     with open(dir_name+"/grocery.json", 'w') as f:
         json.dump(grocery_data, f)
@@ -133,5 +135,7 @@ def main():
     send_email(grocery_data, parsed_email)
 
 if __name__ == "__main__":
-    #unittest.main()
-    main()        
+    if sys.argv[1:2] == ['test']:
+        unittest.main()
+    else:
+        main(sys.stdin.read())        
