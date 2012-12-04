@@ -6,6 +6,7 @@ import unittest
 import json
 import smtplib
 from email.mime.text import MIMEText
+import datetime
 
 def parse_email(email_data):
     parsed_email = email.message_from_string(email_data)
