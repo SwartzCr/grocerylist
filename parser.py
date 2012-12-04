@@ -125,7 +125,7 @@ def main(email_data):
     parsed_email = parse_email(email_data)
     email_line_list = parsed_email2split_lines(parsed_email)
     if email_line_list:
-        with open(dir_name+"/"+datetime.datetime.now().ctime(), 'w') as er:
+        with open(dir_name+"/archives/"+datetime.datetime.now().ctime(), 'w') as er:
             er.write(email_data)
     grocery_data = execute(email_line_list, grocery_data)
     with open(dir_name+"/grocery.json", 'w') as f:
